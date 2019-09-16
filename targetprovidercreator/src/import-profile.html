@@ -1,0 +1,27 @@
+<template>
+  <section class="au-animate">
+    <h2>${heading}</h2>
+    <form role="form" >
+      <div class="form-group">
+        <input type="file" files.bind="profile" class="form-control" accept=".jar">
+        <br>
+        <p><input type="checkbox" checked.bind="allowChangePassword">
+        <label>allow change password</label>
+        </p>
+        <p>
+		<input type="checkbox" checked.bind="attributeCaseSensitive">
+		<label>Attribute value case sensitive</label>
+		</p>
+		<button type="submit" class="btn" click.trigger='save()' disabled.bind="!fileLoaded">Submit</button>
+      </div>
+    </form>
+    <div class="alert alert-block alert-warning" id="error" style="display: ${displayError}; color:red">
+      An Error occured whiled parsing the profile: ${error}
+    </div>
+    <div class="alert alert-success" id="success" style="display: ${displaySuccess}; color:green">
+      Profile accepted, creating Target Profile Definition...
+    </div>
+    Ver:1.0.17
+    <p><a href="resource/change.log">Change log</a></p>
+  </section>
+</template>

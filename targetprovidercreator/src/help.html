@@ -1,0 +1,43 @@
+<template bindable="help">
+	<section>
+		<br>
+			<h1>How to create targetProfile.json for Identity Brokerage</h1>
+			<p>Step 1:</p>
+			<p>import your adapter profile jar and click submit. If there are no errors it will automatically switch to the profile definition view. If you know most of your attribute values are case-insensitive, uncheck the checkbox <strong>Attribute value case sensitive. </strong>If your endpoint does not support password change, uncheck the checkbox <strong>allow change password</strong></p>
+			<p>You will get an output that you can review and&nbsp;download the targetProfile.json file</p>
+			<p>Step 2: clean up the data. For each attribute, check each property and make sure that it is correct (refer to the SCIM spec at <a href="https://tools.ietf.org/html/rfc7643">https://tools.ietf.org/html/rfc7643</a>).</p>
+			<ol>
+				<li>Check the targetProfile.json for any errors like duplicate attributes. Remove them as necessary.</li>
+				<li>There might be attributes that are no longer valid in the adapter but were not removed from the schema because that would have caused error in ldap. Go ahead and remove them in the attribute list in the definition</li>
+				<li>In the Target attributes, remove anything related to extended tests attribute. Also remove attribute for local AL path</li>
+				<li>The adapter might have defined attributes as binary when the data is actually string (this was done as a workaround to the length limit in older ldap). Change their types to string so that they display correctly in SCIM (otherwise binary data are base64 encoded)</li>
+				<li>If an attribute&rsquo;s type is showing as string but you know it should be numeric, change it to integer or decimal. Do the same to other types.</li>
+				<li>Check each attribute, see if it needs to be case sensitive or not in the endpoint. Change according to the SCIM schema.</li>
+				<li>Check that all password/secrets should have returned set to &ldquo;never&rdquo; and their mutability set to writeOnly.</li>
+				<li>Refer to the account/group/service forms.
+					<ol>
+						<li>If any attribute is chosen from a set of possible values, add a canonicalValues property in the schema and put those values in canonicalValues. For an example, you can refer to eraccountstatus (if the values are strings make sure to quote them),&nbsp;</li>
+						<li>If the value is an integer but has a string label, add the label to the description (e.g., 0 = Option1, 1= Option2, etc.)</li>
+						<li>If the value is supporting Data, add this line to the description: "Get a list of possible values from SupportingData"</li>
+						<li>check group forms to correct any incorrect "required" setting</li>
+					</ol>
+				</li>
+				<li>In the description field, you might want to change all "service" references to "target" since that is the terminology used by IGI</li>
+			</ol>
+			<p>Step 3:</p>
+			<p>Fill in attribute mapping:</p>
+			<p>The tool automatically fills in required mapping or warns with "!!!" for everything <strong>except </strong>user extension.</p>
+			<p>All service groups in the adapter will be shown as groups in IB, so we need to map the groups in the attribute mapping accordingly</p>
+			<ol>
+				<li>In targetProfile.json, under "resourceType" and the object with schema = "urn:ietf:params:scim:schemas:core:2.0:Group", check that all the different group profiles are accounted for under "schemaExtensions". Remove anything that is no longer valid</li>
+				<li>Under "userExtension.attributeMapping.coreAttributes.groups[], for each group, check that the "value" and "display" are filled in by the tool. If not, fill them in. The "value" attribute takes the field accountAttribute + "." + value from AttributeMap["erGroupId"] in Group definition in service.def or resource.def. The "display" attribute takes its value from AttributeMap["erGroupName"] from the same group definition</li>
+				<li>Under "groupExtensions"-&gt;"attributeMapping", for each group, make sure &ldquo;objectProfile&rdquo; is set, and "coreAttributes"-&gt;"displayName" is set to the corresponding group name. in "members"-&gt;"value", enter the attribute for this group from the account object (note: the part before the dot of what you entered for the groups in the account object).</li>
+			</ol>
+			<p>Step 4. Fill in the rest of attribute mapping (not needed if used solely in IGI)</p>
+			<p>In all attributeMapping sections, look at the list of SCIM standard attributes and try to find the attribute that fit that description. You will need to refer to the SCIM schema spec to see if the type matches. Exceptions here are roles and entitlements as those are usually support groups in the adapter and their values are not fully defined in the SCIM spec. Note that for locale and timezone, you should only map them if their values are defined according to the same standard used in the SCIM spec.</p>
+			<p>Step 5. Fill in supportingData</p>
+			<p>The tool creates supportingData object for you, but the name for the supporting Data is not filled in. Please look at the supporting Data class name and pick something user friendly. Add this name to the schema extensions in the SupportingData resource Types.</p>
+			<p>Step 6. Once you finished with the mapping, make sure the json is valid, then add it to the profile jar.</p>
+			<p>you can also get an example of the <a class="btn" download="serviceNowTooloutput.json" href="resource/serviceNowTooloutput.json" role="button">tool output</a> vs <a class="btn" download="serviceNowProduction.json" href="resource/serviceNowProduction.json" role="button">a near production targetprofile json</a> (some fields like description are not filled out yet) and see the difference</p>   
+		</section>
+	</template>

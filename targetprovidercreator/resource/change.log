@@ -1,0 +1,40 @@
+v1.0.17
+-- prevent output of target schema items that are not in serviceform
+v1.0.16
+-- fix parsing when form input does not specify types
+v1.0.15
+-- fix attributes not generated when there are no group forms
+v1.0.14
+-- fix forms parsing
+-- add profile parse error/success display
+v1.0.13
+-- fix attributes not defined in schema (those defined in isim) cause parsing to fail
+v1.0.12
+-- fix supportingData returned as ServiceNowProfile
+v1.0.11
+-- fix empty group definition block causes parsing to fail
+-- fix using ergroupdescription attribute causes parsing to fail
+v1.0.10
+-- fix groups attribute Mapping in userExtension to use ergroupid instead of RdnAttribute
+v1.0.9
+-- autofill groups attribute Mapping in userExtension
+v1.0.8
+-- default all binary types to string
+v1.0.7
+-- default attributes to case insensitive due to IGI data tier limitation
+v1.0.6
+-- fixed parsing of non tabbed form
+v1.0.5
+-- fixed groups and target attribute type incorrectly defaulted to string
+-- include this release note in help
+v1.0.4
+-- change common attributes description to remove reference to service
+v1.0.3
+-- embeded examples has been updated
+-- resource type names changed
+-- supporting data are marked as readOnly
+-- provided 2 checkbox to configure if passwordchange is supported and if attribute values are case sensitive.  Both are selected by default.
+-- fixed the bug where a page reload was needed after each import
+v1.0.2
+-- provide mapping for supporting data
+-- include warning text !!! for those fields that must be changed by user

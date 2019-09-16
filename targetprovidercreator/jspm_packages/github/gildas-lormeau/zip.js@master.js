@@ -1,0 +1,1 @@
+module.exports = require("github:gildas-lormeau/zip.js@master/WebContent/zip");

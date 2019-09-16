@@ -1,0 +1,8 @@
+<template>
+    <section>
+        <h2>${heading}</h2>
+        <p>Please download the file, add attribute mapping and make necessary changes.  To find out more about how to modify the profile and fill out the mapping please refer to the help tab</p>
+        <a class="btn" download="targetProfile.json" href="data:application/json;,${extensionSchemaEncoded}" role="button">download</a>       
+        <pre id="data" >${extensionSchema}</pre>
+    </section>
+</template>        

@@ -1,0 +1,993 @@
+{
+    "name": "ServiceNowProfile",
+    "description": "ServiceNowProfile target profile definition",
+    "providerType": "SDI",
+    "providerConfig": {
+        "changePassword": true
+    },
+    "resourceTypes": [
+        {
+            "schemas": [
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType"
+            ],
+            "id": "ServiceNowProfileUser",
+            "name": "User",
+            "endpoint": "Users",
+            "description": "Class representing an ServiceNow account",
+            "schema": "urn:ietf:params:scim:schemas:core:2.0:User",
+            "schemaExtensions": [
+                {
+                    "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowAccount:2.0:User",
+                    "required": false
+                }
+            ],
+            "meta": {
+                "location": "/v2/ResourceTypes/User",
+                "resourceType": "ResourceType"
+            }
+        },
+        {
+            "schemas": [
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType"
+            ],
+            "id": "ServiceNowProfileGroup",
+            "name": "Group",
+            "endpoint": "Groups",
+            "description": "ServiceNowProfile Group resourceType",
+            "schema": "urn:ietf:params:scim:schemas:core:2.0:Group",
+            "schemaExtensions": [
+                {
+                    "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowGroupProfile:2.0:Group",
+                    "required": false
+        },
+        {
+                    "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowRoleProfile:2.0:Group",
+                    "required": false
+                }
+            ],
+            "meta": {
+                "location": "/v2/ResourceTypes/Group",
+                "resourceType": "ResourceType"
+            }
+        },
+        {
+            "schemas": [
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType"
+            ],
+            "id": "ServiceNowProfileTarget",
+            "name": "Target",
+            "endpoint": "Targets",
+            "description": "ServiceNowProfile Target resourceType",
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:ServiceNowProfile:2.0:Target",
+            "schemaExtensions": [],
+            "meta": {
+                "location": "/v2/ResourceTypes/Target",
+                "resourceType": "ResourceType"
+            }
+        },
+        {
+            "schemas": [
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType"
+            ],
+            "id": "ServiceNowProfileSupportingData",
+            "name": "SupportingData",
+            "endpoint": "SupportingData",
+            "description": "ServiceNowProfile SupportingData ResourceType",
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:ServiceNowProfile:2.0:SupportingData",
+            "schemaExtensions": [
+                "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Title",
+                "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Department",
+                "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:TimeZone",
+                "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Location"
+            ],
+            "meta": {
+                "location": "/v2/ResourceTypes/SupportingData",
+                "resourceType": "ResourceType"
+            }
+        }
+    ],
+    "userExtension": {
+        "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowAccount:2.0:User",
+        "definition": {
+            "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowAccount:2.0:User",
+            "name": "CustomUserExtension",
+            "description": "Security adapter view a user",
+            "attributes": [
+                {
+                    "name": "eruid",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "A identifier used to uniquely identify a user",
+                    "required": true,
+                    "caseExact": true,
+                    "mutability": "immutable",
+                    "returned": "default",
+                    "uniqueness": "server"
+                },
+                {
+                    "name": "erpassword",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "A password used to authenticate a user.",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "writeOnly",
+                    "returned": "never",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "eraccountstatus",
+                    "type": "integer",
+                    "multiValued": false,
+                    "description": "An identifier used to indicate if the account is active(0) or suspended(1).",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none",
+                    "canonicalValues": [
+                        0,
+                        1
+                    ]
+                },
+                {
+                    "name": "erServiceNowActive",
+                    "type": "boolean",
+                    "multiValued": false,
+                    "description": "Active",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowCalendarIntegration",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Calendar integration",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowDateFormat",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Date format",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+					"name" : "erServiceNowDepartment",
+							"type" : "string",
+							"multiValued" : false,
+                    "description": "Department. Get a list of possible values from SupportingData",
+							"required" : false,
+                    "caseExact": true,
+					"mutability" : "readWrite",
+					"returned" : "default",
+					"uniqueness" : "none"
+				},
+                {
+                    "name": "erServiceNowEmail",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Email",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowFirstName",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "First name",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowInternalIntegrationUser",
+                    "type": "boolean",
+                    "multiValued": false,
+                    "description": "Internal Integration User",
+                    "required": false,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowLastName",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Last name",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowLocation",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Location. Get a list of possible values from SupportingData",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowMobilePhone",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Mobile phone",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowNotification",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Notification",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowPasswordNeedsReset",
+                    "type": "boolean",
+                    "multiValued": false,
+                    "description": "Password needs reset",
+                    "required": false,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowPhone",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Business phone",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowSysID",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Sys ID",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowTimeZone",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Time zone. Get a list of possible values from SupportingData",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowTitle",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Title. Get a list of possible values from SupportingData",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowUserGroupList",
+                    "type": "string",
+                    "multiValued": true,
+                    "description": "Group Membership",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowUserRoleList",
+                    "type": "string",
+                    "multiValued": true,
+                    "description": "Role Membership",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowWebServiceAccessOnly",
+                    "type": "boolean",
+                    "multiValued": false,
+                    "description": "Web service access only",
+                    "required": false,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                }
+            ]
+        },
+        "attributeMapping": {
+            "objectProfile": "ServiceNowAccount",
+            "resourceType": "User",
+            "commonAttributes": {
+                "externalId": "",
+                "meta": {
+                    "created": "",
+                    "lastModified": ""
+                }
+            },
+            "coreAttributes": {
+                "userName": "eruid",
+                "password": "erpassword",
+                "active": "eraccountstatus",
+                "name": {
+                    "formatted": "",
+                    "familyName": "erServiceNowLastName",
+                    "givenName": "erServiceNowFirstName",
+                    "middleName": "",
+                    "honorificPrefix": "",
+                    "honorificSuffix": ""
+                },
+                "displayName": "",
+                "nickName": "",
+                "profileUrl": "",
+                "title": "erServiceNowTitle",
+                "userType": "",
+                "preferredLanguage": "",
+                "locale": "",
+                "timezone": "erServiceNowTimeZone",
+                "emails": [
+                    {
+                        "value": "erServiceNowEmail",
+                        "display": "",
+                        "primary": "",
+                        "type": "work"
+                    }
+                ],
+                "phoneNumbers": [
+                    {
+                        "value": "erServiceNowPhone",
+                        "display": "",
+                        "primary": "",
+                        "type": "work"
+                    },
+                    {
+                        "value": "erServiceNowMobilePhone",
+                        "display": "",
+                        "primary": "",
+                        "type": "mobile"
+                    }
+                ],
+                "ims": [
+                    {
+                        "value": "",
+                        "display": "",
+                        "primary": "",
+                        "type": ""
+                    }
+                ],
+                "photos": [
+                    {
+                        "value": "",
+                        "display": "",
+                        "primary": "",
+                        "type": ""
+                    }
+                ],
+                "addresses": [
+                    {
+                        "formatted": [],
+                        "streetAddress": [],
+                        "locality": "",
+                        "region": "",
+                        "postalCode": "",
+                        "country": "",
+                        "type": ""
+                    }
+                ],
+                "groups": [
+                    {
+                        "value": "erServiceNowUserGroupList.erServiceNowGroupSysID",
+                        "display": "",
+                        "type": ""
+                    },
+                    {
+                        "value": "erServiceNowUserRoleList.erServiceNowRoleSysID",
+                        "display": "",
+                        "type": ""
+                    }
+                ],
+                "entitlements": [
+                    {
+                        "value": "",
+                        "display": "",
+                        "primary": "",
+                        "type": ""
+                    }
+                ],
+                "roles": [
+                    {
+                        "value": "",
+                        "display": "",
+                        "primary": "",
+                        "type": ""
+                    }
+                ],
+                "x509Certificates": [
+                    {
+                        "value": "",
+                        "display": "",
+                        "primary": "",
+                        "type": ""
+                    }
+                ]
+            },
+            "enterpriseExtensionAttributes": {
+                "employeeNumber": "",
+                "costCenter": "",
+                "organization": "",
+                "division": "",
+                "department": "erServiceNowDepartment",
+                "manager": {
+                    "value": "",
+                    "displayname": ""
+                }
+            }
+        }
+    },
+    "groupExtensions": [
+        {
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowGroupProfile:2.0:Group",
+        "definition": {
+                "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowGroupProfile:2.0:Group",
+                "name": "ServiceNowGroupProfileGroupExtension",
+                "description": "ServiceNowGroupProfile Group schema",
+            "attributes": [
+                {
+                    "name": "erServiceNowGroupSysID",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Group Sys ID",
+                        "required": true,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowGroupName",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Group Name",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowGroupDescription",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Group Description",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowGroupParent",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Group Parent",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowGroupRoles",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Group Roles",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                    },
+                    {
+                        "name": "memberAssignments",
+                        "type": "complex",
+                        "multiValued": true,
+                        "description": "A list of members of the Group.",
+                        "required": false,
+                        "subAttributes": [
+                            {
+                                "name": "value",
+                                "type": "string",
+                                "multiValued": false,
+                                "description": "Identifier of the member of this Group.",
+                                "required": false,
+                                "caseExact": false,
+                                "mutability": "readWrite",
+                                "returned": "default",
+                                "uniqueness": "none"
+                            },
+                            {
+                                "name": "$ref",
+                                "type": "reference",
+                                "referenceTypes": [
+                                    "User",
+                                    "Group"
+                                ],
+                                "multiValued": false,
+                                "description": "The URI corresponding to a SCIM resource that is a member of this Group.",
+                                "required": false,
+                                "caseExact": false,
+                                "mutability": "readOnly",
+                                "returned": "default",
+                                "uniqueness": "none"
+                            },
+                            {
+                                "name": "type",
+                                "type": "string",
+                                "multiValued": false,
+                                "description": "A label indicating the type of resource,e.g., 'User' or 'Group'.",
+                                "required": false,
+                                "caseExact": false,
+                                "canonicalValues": [
+                                    "User",
+                                    "Group"
+                                ],
+                                "mutability": "readOnly",
+                                "returned": "default",
+                                "uniqueness": "none"
+                            }
+                        ],
+                        "mutability": "readWrite",
+                        "returned": "default"
+                }
+            ]
+        },
+        "attributeMapping": {
+                "objectProfile": "ServiceNowGroupProfile",
+            "commonAttributes": {
+                "meta": {
+                    "created": "",
+                    "lastModified": ""
+                }
+            },
+            "coreAttributes": {
+                "displayName": "erServiceNowGroupName",
+                "members": [
+                    {
+                        "value": "erServiceNowUserGroupList",
+                        "type": ""
+                    }
+                ]
+            }
+        }
+    },
+    {
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowRoleProfile:2.0:Group",
+        "definition": {
+                "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowRoleProfile:2.0:Group",
+                "name": "ServiceNowRoleProfileGroupExtension",
+                "description": "ServiceNowRoleProfile Group schema",
+            "attributes": [
+                {
+                    "name": "erServiceNowRoleSysID",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Role Sys ID",
+                        "required": true,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowRoleName",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Role Name",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowRoleDescription",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Role Description",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowRoleContains",
+                    "type": "string",
+                    "multiValued": false,
+                        "description": "Role Contains",
+                    "required": false,
+                        "caseExact": true,
+                        "mutability": "readWrite",
+                        "returned": "default",
+                        "uniqueness": "none"
+                    },
+                    {
+                        "name": "memberAssignments",
+                        "type": "complex",
+                        "multiValued": true,
+                        "description": "A list of members of the Group.",
+                        "required": false,
+                        "subAttributes": [
+                            {
+                                "name": "value",
+                                "type": "string",
+                                "multiValued": false,
+                                "description": "Identifier of the member of this Group.",
+                                "required": false,
+                                "caseExact": false,
+                                "mutability": "readWrite",
+                                "returned": "default",
+                                "uniqueness": "none"
+                            },
+                            {
+                                "name": "$ref",
+                                "type": "reference",
+                                "referenceTypes": [
+                                    "User",
+                                    "Group"
+                                ],
+                                "multiValued": false,
+                                "description": "The URI corresponding to a SCIM resource that is a member of this Group.",
+                                "required": false,
+                                "caseExact": false,
+                                "mutability": "readOnly",
+                                "returned": "default",
+                                "uniqueness": "none"
+                            },
+                            {
+                                "name": "type",
+                                "type": "string",
+                                "multiValued": false,
+                                "description": "A label indicating the type of resource,e.g., 'User' or 'Group'.",
+                                "required": false,
+                                "caseExact": false,
+                                "canonicalValues": [
+                                    "User",
+                                    "Group"
+                                ],
+                                "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                }
+                        ],
+                        "mutability": "readWrite",
+                        "returned": "default"
+                    }
+            ]
+            },
+        "attributeMapping": {
+                "objectProfile": "ServiceNowRoleProfile",
+            "commonAttributes": {
+                "meta": {
+                    "created": "",
+                    "lastModified": ""
+                }
+            },
+            "coreAttributes": {
+                "displayName": "erServiceNowRoleName",
+                "members": [
+                    {
+                        "value": "erServiceNowUserRoleList",
+                        "type": ""
+                    }
+                ]
+            }
+        }
+    }    
+    ],
+    "targetSchema": {
+        "schema": "urn:ibm:idbrokerage:params:scim:schemas:ServiceNowProfile:2.0:Target",
+        "definition": {
+            "name": "Target definition",
+            "id": "urn:ibm:idbrokerage:params:scim:schemas:ServiceNowProfile:2.0:Target",
+            "description": "ServiceNowProfile Target definition",
+            "attributes": [
+                {
+                    "name": "erservicename",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "erservicename",
+                    "required": true,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "always",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "description",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "description",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "always",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "eritdiurl",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "URL of SDI dispatcher",
+                    "required": true,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erservicenowapikey",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "ServiceNow API Password",
+                    "required": true,
+                    "caseExact": true,
+                    "mutability": "writeOnly",
+                    "returned": "never",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erservicenowapilimit",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "ServiceNow Reconciliation Pagination Limit",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erservicenowapiuser",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "ServiceNow API Username",
+                    "required": true,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowDisableALCache",
+                    "type": "boolean",
+                    "multiValued": false,
+                    "description": "Disable AL Cache",
+                    "required": false,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowMaxConnectionCnt",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Max Connection Count",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erservicenowproxy",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "Proxy",
+                    "required": false,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erservicenowurl",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "ServiceNow API Login URL",
+                    "required": true,
+                    "caseExact": true,
+                    "mutability": "readWrite",
+                    "returned": "default",
+                    "uniqueness": "none"
+                }
+            ]
+        }
+    },
+    "otherSchemas": [
+        {
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Title",
+
+            "definition": {
+                "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Title",
+                "name": "Title",
+                "attributes": [
+                    {
+                        "name": "erServiceNowTitleSysID",
+                        "type": "string",
+                        "multiValued": false,
+                        "description": "",
+                        "required": true,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                        "returned": "default",
+                        "uniqueness": "none"
+                    },
+                    {
+                        "name": "erServiceNowTitleLabel",
+                        "type": "string",
+                        "multiValued": false,
+                        "description": "",
+                        "required": false,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                        "returned": "default",
+                        "uniqueness": "none"
+                    }
+                ]
+            },
+            "attributeMapping": {
+                "objectClass": "erServiceNowTitleClass",
+                "display": "erServiceNowTitleLabel"
+            }
+        },
+        {
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Department",
+            "definition": {
+                "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Department",
+                "name": "Department",
+                "attributes": [                
+                {
+                    "name": "erServiceNowDepartmentSysID",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "",
+                    "required": true,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowDepartmentName",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "",
+                        "required": false,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                    }
+                ]
+            },
+            "attributeMapping": {
+                "objectClass": "erServiceNowDepartmentClass",
+                "display": "erServiceNowDepartmentName"
+            }
+        },
+        {
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:TimeZone",
+            "definition": {
+                "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:TimeZone",
+                "name": "TimeZone",
+                "attributes": [                
+                {
+                    "name": "erServiceNowTimeZoneSysID",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "",
+                    "required": true,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                },
+                {
+                    "name": "erServiceNowTimeZoneLabel",
+                    "type": "string",
+                    "multiValued": false,
+                    "description": "",
+                        "required": false,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                    "returned": "default",
+                    "uniqueness": "none"
+                    }
+                ]
+            },
+            "attributeMapping": {
+                "objectClass": "erServiceNowTimeZoneClass",
+                "display": "erServiceNowTimeZoneLabel"
+            }
+        },
+        {
+            "schema": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Location",
+            "definition": {
+                "id": "urn:ibm:idbrokerage:params:scim:schemas:extension:ServiceNowProfile:2.0:Location",
+                "name": "Location",
+                "attributes": [
+                    {
+                        "name": "erServiceNowLocationSysID",
+                        "type": "string",
+                        "multiValued": false,
+                        "description": "",
+                        "required": false,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                        "returned": "default",
+                        "uniqueness": "none"
+                    },
+                    {
+                        "name": "erServiceNowLocationName",
+                        "type": "string",
+                        "multiValued": false,
+                        "description": "",
+                        "required": false,
+                        "caseExact": true,
+                        "mutability": "readOnly",
+                        "returned": "default",
+                        "uniqueness": "none"
+                    }
+                ]
+            },
+            "attributeMapping": {
+                "objectClass": "erServiceNowLocationClass",
+                "display": "erServiceNowLocationName"
+            }
+        }        
+    ]
+}
